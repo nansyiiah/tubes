@@ -1,0 +1,42 @@
+import requests
+import json
+
+def getCountries():
+    headers = {
+        'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36',
+    }
+    req = requests.get("https://covid19.mathdro.id/api/countries/", headers=headers)
+    data = json.loads(req.text)
+    return data
+
+def getDatCorona(url):
+    headers = {
+        'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36',
+    }
+    req = requests.get("https://covid19.mathdro.id/api/countries/"+url, headers=headers)
+    data = json.loads(req.text)
+    return data
+while(True):
+    kodeNegara = []
+    a = getCountries()
+    for country_data in a['countries']:
+        if 'iso2' in country_data:
+            kodeNegara.append([country_data['name'], country_data['iso2']])
+
+    search_nama = input("Masukkan nama negara yang ingin di cari : ")
+    tes = search_nama.capitalize()
+# if search_nama in kodeNegara:
+    for country in kodeNegara:
+        namaNegara = country[0]
+        kodeNegara_2digit = country[1]
+
+        if tes in namaNegara:
+            coronaData = getDatCorona(kodeNegara_2digit)
+            print("Confirmed : " + str(coronaData['confirmed']['value']))
+            print("Recovered : " + str(coronaData['recovered']['value']))
+            print("Deaths    : " + str(coronaData['deaths']['value']))
+            break
+    else:
+        print("Tidak ada data negara tersebut.")
